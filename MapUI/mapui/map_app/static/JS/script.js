@@ -36,21 +36,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         towerInfo.style.display = "block";
-        towerInfo.innerHTML = `<strong>Selected Towers (${filteredTowers.length}):</strong><br>`;
+        towerInfo.innerHTML = `<strong>Registered Towers(${filteredTowers.length}):</strong><br>`;
 
         let markers = [];
 
         filteredTowers.forEach(tower => {
             const marker = L.circleMarker([tower.latitude, tower.longitude], {
                 color: 'blue',
-                radius: 5,
-                fillOpacity: 0.7
+                radius: 2,
+                fillOpacity: 0.7,
+                stroke: 1
             }).bindTooltip(tower.name);
 
             markers.push(marker);
-            towerInfo.innerHTML += `${tower.name}<br>`;
-        });
 
+            towerInfo.innerHTML += `<div>• ${tower.name}<br> [Lat: ${tower.latitude}, Lng: ${tower.longitude}]</div>`;
+        });
         // Store all markers in a layer group and add it to the map
         towerLayer = L.layerGroup(markers).addTo(map);
     }
