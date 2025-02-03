@@ -1,0 +1,8 @@
+path:focus:not(:focus-visible) {
+    outline: 0;
+}
+
+.loading {
+    text-align: center;
+    margin-top: 20px;
+}
