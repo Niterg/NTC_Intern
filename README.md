@@ -17,7 +17,10 @@
     - Open the ``downloaded folder`` as 
     ```ps
     cd MapUI
+    cd mapui
     ```
+    - Create a database named ``mapdata`` in ``PostgresSQL``, the name and password can be found in ``settings.py``
+      - Insert the ``dummy_towers.sql`` into the table named ``map_app_tower``
     - To run the ``django file`` run the command
     ```ps
     python manage.py runserver
