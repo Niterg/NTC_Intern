@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const map = L.map('map').setView([28.3949, 84.1240], 7);
+    window.map = L.map('map').setView([28.3949, 84.1240], 7);
     consttiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '© OpenStreetMap'
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let allDistricts = null;
     let allMunicipalities = null;
     let allWards = null;
-    let allTowers = [];
+    window.allTowers = [];
 
     async function loadTowers() {
         const response = await fetch('/get-towers/');
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load all data first
     Promise.all([
-        fetch('static/JSON/Nepal_.geojson').then(res => res.json()),
+        fetch('static/JSON/nepal.geojson').then(res => res.json()),
         fetch('static/JSON/provinces.geojson').then(res => res.json()),
         fetch('static/JSON/districts.geojson').then(res => res.json()),
         fetch('static/JSON/municipalities.geojson').then(res => res.json()),
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
         nepalLayer = L.geoJSON(nepalData, {
             style: { color: 'orange', weight: 2, fillOpacity: 0.1 }
         }).addTo(map);
-        const Nepal = nepalData.features.find(f => f.properties['name'] === 'नेपाल');
+        const Nepal = nepalData.features.find(f => f.properties["name"] === "नेपाल");
         filterTowers(Nepal);
 
         // Setup province dropdown
@@ -105,11 +105,13 @@ document.addEventListener("DOMContentLoaded", function () {
         provinceDropdown.addEventListener('change', function (e) {
             const districtDropdown = document.getElementById('districtDropdown');
             const municipalityDropdown = document.getElementById('municipalityDropdown');
+            const wardDropdown = document.getElementById('wardDropdown');
 
             districtDropdown.innerHTML = '<option value="">Select a district</option>';
             municipalityDropdown.innerHTML = '<option value="">Select a district first</option>';
             districtDropdown.disabled = true;
             municipalityDropdown.disabled = true;
+            wardDropdown.disabled = true;
 
             if (provinceLayer) map.removeLayer(provinceLayer);
             if (districtLayer) map.removeLayer(districtLayer);
@@ -162,8 +164,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             districtDropdown.addEventListener('change', function (e) {
                 const municipalityDropdown = document.getElementById('municipalityDropdown');
+                const wardDropdown = document.getElementById('wardDropdown');
                 municipalityDropdown.innerHTML = '<option value="">Select a municipality</option>';
                 municipalityDropdown.disabled = true;
+                wardDropdown.disabled = true;
 
                 if (districtLayer) map.removeLayer(districtLayer);
                 if (municipalityLayer) map.removeLayer(municipalityLayer);
