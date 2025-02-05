@@ -1,3 +1,5 @@
+window.towersInRegion = [];
+
 document.addEventListener("DOMContentLoaded", function () {
     const drawnItems = new L.FeatureGroup();
     window.map.addLayer(drawnItems);
@@ -55,8 +57,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const selectedTowers = new Set();
+
         drawnItems.getLayers().forEach(layer => {
-            allTowers.forEach(tower => {
+            window.towersInRegion.forEach(tower => { // Only check towers already in `towersInRegion`
                 if (isPointInShape([tower.longitude, tower.latitude], layer)) {
                     selectedTowers.add(tower);
                 }
