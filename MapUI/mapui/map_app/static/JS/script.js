@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let allMunicipalities = null;
     let allWards = null;
     window.allTowers = [];
-    window.towersInRegion = [];
 
     async function loadTowers() {
         const response = await fetch('/get-towers/');
@@ -37,22 +36,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         towerInfo.style.display = "block";
-        towerInfo.innerHTML = `<strong>Registered Towers(${filteredTowers.length}):</strong><br>`;
+        towerInfo.innerHTML = `<strong>Selected Towers (${filteredTowers.length}):</strong><br>`;
 
         let markers = [];
 
         filteredTowers.forEach(tower => {
             const marker = L.circleMarker([tower.latitude, tower.longitude], {
                 color: 'blue',
-                radius: 2,
-                fillOpacity: 0.7,
-                stroke: 1
+                radius: 5,
+                fillOpacity: 0.7
             }).bindTooltip(tower.name);
 
             markers.push(marker);
-
-            towerInfo.innerHTML += `<div><b>${tower.name}</b> [Lat: ${tower.latitude}, Lng: ${tower.longitude}]</div>`;
+            towerInfo.innerHTML += `${tower.name}<br>`;
         });
+
         // Store all markers in a layer group and add it to the map
         towerLayer = L.layerGroup(markers).addTo(map);
     }
@@ -65,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const selectedGeometry = turf.flatten(selectedFeature.geometry);
-        towersInRegion = allTowers.filter(tower => {
+        const towersInRegion = allTowers.filter(tower => {
             const towerPoint = turf.point([tower.longitude, tower.latitude]);
             return selectedGeometry.features.some(geo => turf.booleanContains(geo, towerPoint));
         });
@@ -87,20 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Load nepal layer
         nepalLayer = L.geoJSON(nepalData, {
-            style: feature => ({
-                color: 'orange', weight: 2, fillOpacity: 0.1
-            }),
-            onEachFeature: (feature, layer) => {
-                if (feature.properties) {
-                    // Detailed tooltip with additional properties
-                    const tooltipContent = `
-                            <strong>${feature.properties['name:en'] || feature.properties['name']}</strong><br>
-                            Nepali Name: ${feature.properties['name:ne'] || 'N/A'}<br>
-                            
-                        `;
-                    layer.bindTooltip(tooltipContent, { sticky: true });
-                }
-            }
+            style: { color: 'orange', weight: 2, fillOpacity: 0.1 }
         }).addTo(map);
         const Nepal = nepalData.features.find(f => f.properties["name"] === "नेपाल");
         filterTowers(Nepal);
@@ -124,7 +109,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             districtDropdown.innerHTML = '<option value="">Select a district</option>';
             municipalityDropdown.innerHTML = '<option value="">Select a district first</option>';
-            wardDropdown.innerHTML = '<option value="">Select municipality first</option>';
             districtDropdown.disabled = true;
             municipalityDropdown.disabled = true;
             wardDropdown.disabled = true;
@@ -138,20 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (selectedName) {
                 const selectedProvince = provincesData.features.find(f => f.properties['name'] === selectedName);
                 provinceLayer = L.geoJSON(selectedProvince, {
-                    style: feature => ({
-                        color: 'green', weight: 2, fillOpacity: 0.1
-                    }),
-                    onEachFeature: (feature, layer) => {
-                        if (feature.properties) {
-                            // Detailed tooltip with additional properties
-                            const tooltipContent = `
-                            <strong>${feature.properties['name:en'] || feature.properties['name']}</strong><br>
-                            Nepali Name: ${feature.properties.name || 'N/A'}<br>
-                            
-                        `;
-                            layer.bindTooltip(tooltipContent, { sticky: true });
-                        }
-                    }
+                    style: { color: 'green', weight: 2, fillOpacity: 0.1 }
                 }).addTo(map);
                 map.fitBounds(provinceLayer.getBounds());
                 updateDistrictDropdown(selectedProvince);
@@ -195,7 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const municipalityDropdown = document.getElementById('municipalityDropdown');
                 const wardDropdown = document.getElementById('wardDropdown');
                 municipalityDropdown.innerHTML = '<option value="">Select a municipality</option>';
-                wardDropdown.innerHTML = '<option value="">Select municipality first</option>';
                 municipalityDropdown.disabled = true;
                 wardDropdown.disabled = true;
 
@@ -210,20 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         f => f.properties['name'] === selectedDistrictName
                     );
                     districtLayer = L.geoJSON(selectedDistrict, {
-                        style: feature => ({
-                            color: 'blue', weight: 2, fillOpacity: 0.1
-                        }),
-                        onEachFeature: (feature, layer) => {
-                            if (feature.properties) {
-                                // Detailed tooltip with additional properties
-                                const tooltipContent = `
-                            <strong>${feature.properties['name:en'] || feature.properties['name']}</strong><br>
-                            Nepali Name: ${feature.properties['name:ne'] || 'N/A'}<br>
-                            
-                        `;
-                                layer.bindTooltip(tooltipContent, { sticky: true });
-                            }
-                        }
+                        style: { color: 'red', weight: 1, fillOpacity: 0.1 }
                     }).addTo(map);
                     map.fitBounds(districtLayer.getBounds());
                     updateMunicipalityDropdown(selectedDistrict);
@@ -273,20 +230,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         f => f.properties.name === selectedMunicipalityName
                     );
                     municipalityLayer = L.geoJSON(selectedMunicipality, {
-                        style: feature => ({
-                            color: 'red', weight: 2, fillOpacity: 0.1
-                        }),
-                        onEachFeature: (feature, layer) => {
-                            if (feature.properties) {
-                                // Detailed tooltip with additional properties
-                                const tooltipContent = `
-                            <strong>${feature.properties['name:en'] || feature.properties['name']}</strong><br>
-                            Nepali Name: ${feature.properties['name:ne'] || 'N/A'}<br>
-                            
-                        `;
-                                layer.bindTooltip(tooltipContent, { sticky: true });
-                            }
-                        }
+                        style: { color: 'purple', weight: 1, fillOpacity: 0.1 }
                     }).addTo(map);
                     map.fitBounds(municipalityLayer.getBounds());
                     updateWardDropdown(selectedMunicipality);
@@ -331,20 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         f => f.properties.name === selectedWardName
                     );
                     wardLayer = L.geoJSON(selectedWard, {
-                        style: feature => ({
-                            color: 'purple', weight: 2, fillOpacity: 0.1
-                        }),
-                        onEachFeature: (feature, layer) => {
-                            if (feature.properties) {
-                                // Detailed tooltip with additional properties
-                                const tooltipContent = `
-                            <strong>${feature.properties['name:en'] || feature.properties['name']}</strong><br>
-                            Nepali Name: ${feature.properties['name:ne'] || 'N/A'}<br>
-                            
-                        `;
-                                layer.bindTooltip(tooltipContent, { sticky: true });
-                            }
-                        }
+                        style: { color: 'aqua', weight: 1, fillOpacity: 0.2 }
                     }).addTo(map);
                     map.fitBounds(wardLayer.getBounds());
                     filterTowers(selectedWard);
