@@ -11,13 +11,16 @@
 - Download the above file as ``zip`` and extract them into a directory, then perform following commands
     - Create a virtual environment as
     ```ps
-    python -v venv myenv 
-    myenv/Scripts/activate
+    python -v venv venv
+    venv/Scripts/activate
+    ```
+    - Run the followng code to install the dependencies within the ``venv``
+    ```ps
+    pip install -r requirements.txt
     ```
     - Open the ``downloaded folder`` as 
     ```ps
-    cd MapUI
-    cd mapui
+    cd TowerMap
     ```
     - Create a database named ``mapdata`` in ``PostgresSQL``, the name and password can be found in ``settings.py``
       - Insert the ``dummy_towers.sql`` into the table named ``map_app_tower``
