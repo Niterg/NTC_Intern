@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let markers = towers.map(tower => {
             return L.marker([tower.latitude, tower.longitude], {
                 icon: L.icon({
-                    iconUrl: '/static/tower_2.png',
+                    iconUrl: '/static/Images/tower_2.png',
                     iconSize: [12, 26],
                     iconAnchor: [6, 26],
                     popupAnchor: [0, -26]

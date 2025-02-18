@@ -2,6 +2,8 @@
 TowerMap/Firebase/
 # sample-firebase-ai-app-1ad8b-firebase-adminsdk-fbsvc-090770782f.json
 
+.gitignore
+
 # Geojson
 forest.geojson
 municipalities.geojson
@@ -13,6 +15,9 @@ waterways.geojson
 firebase_config.js
 firebase_message.js
 database.md
+
+# Adobe Illustrator files 
+*.ai
 
 # Docker
 Dockerfile
