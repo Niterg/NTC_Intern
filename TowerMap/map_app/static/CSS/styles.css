@@ -1,0 +1,71 @@
+path:focus:not(:focus-visible) {
+    outline: 0;
+}
+
+.loading {
+    text-align: center;
+    margin-top: 20px;
+}
+
+body {
+    font-family: 'Poppins';
+    /* color: white; */
+    /* background-color: #212529; */
+}
+
+strong {
+    font-family: 'Poppins Medium';
+    font-weight: 100;
+}
+
+.devanagari {
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+}
+
+.poppins {
+    font-family: 'Poppins', sans-serif;
+}
+
+/** Text Gradient Example */
+h3, h1, h2 {
+    color: #3e0dab;
+    background-image: linear-gradient(45deg, #3e0dab 10%, #2deda9 100%, #f0d204 43%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#loadingModal {
+    display: none;
+    /* Ensure it is hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden;
+    /* Use visibility to prevent flashing on page load */
+    opacity: 0;
+    /* Hide it smoothly */
+    transition: opacity 0.3s ease-in-out;
+}
+
+#loadingModal.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

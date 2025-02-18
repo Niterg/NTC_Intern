@@ -1,0 +1,48 @@
+# Firebase
+TowerMap/Firebase/
+# sample-firebase-ai-app-1ad8b-firebase-adminsdk-fbsvc-090770782f.json
+
+# Geojson
+forest.geojson
+municipalities.geojson
+rivers.geojson
+wards.geojson
+waterways.geojson
+
+# Firebase JS
+firebase_config.js
+firebase_message.js
+database.md
+
+# Docker
+Dockerfile
+docker-compose.yaml
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# Logs and databases
+*.log
+*.sqlite3
+dummy_towers.sql
+
+# Ipynb
+**/*.Ipynb
+
+# Ms Doc
+**/*.docx
+
+# Extras
+generate_dummy_phone.py

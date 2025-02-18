@@ -1,0 +1,126 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Province Map</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Leaflet CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <!-- Leaflet Draw CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+        <!-- Firebase Scripts -->
+        <script type="module" src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js"></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js"></script>
+        <script type="module" src="{% static 'JS/firebase_config.js' %}"></script>
+        <!-- Include the script with sendMessage function -->
+        <script type="module" src="{% static 'JS/firebase_message.js' %}"></script>
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    </head>
+    <body>
+        <div class="px-4 py-4">
+            <!-- Loading Modal -->
+            <div id="loadingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+                <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+                    <h3>Sending Message...</h3>
+                    <div class="spinner" style="border: 4px solid rgba(0, 0, 0, 0.1); border-left-color: #3e0dab; 
+        border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
+                </div>
+            </div>
+            <!-- Spinner Animation -->
+            <!-- Add padding directly to wrapper -->
+            <div class="row g-3">
+                <!-- Add gutter between columns -->
+                <!-- Left Column (Inputs) -->
+                <div class="col-12 col-md-3">
+                    <div class="d-flex flex-column gap-2">
+                        <!-- Vertical stack with spacing -->
+                        <div class="text-center">
+                            <h2>Towers Based on Administrative Levels</h2>
+                        </div>
+                        <div class="form-group">
+                            <label for="provinceDropdown">Select Province:</label>
+                            <select id="provinceDropdown" class="form-control">
+                                <option value="">Loading...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="districtDropdown">Select District:</label>
+                            <select id="districtDropdown" class="form-control" disabled>
+                                <option value="">First select a province</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="municipalityDropdown">Select Municipality:</label>
+                            <select id="municipalityDropdown" class="form-control" disabled>
+                                <option value="">First select a district</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="wardDropdown">Select Ward:</label>
+                            <select id="wardDropdown" class="form-control" disabled>
+                                <option value="">First select a municipality</option>
+                            </select>
+                        </div>
+                        <div class="text-decoration-none">
+                            <a href="/logout">Logout</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Column (Map) -->
+                <div class="col-12 col-md-9">
+                    <div id="map" class="rounded-3" style="height: calc(60vh );"></div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 col-md-3">
+                    <div class=" rounded" id="tower_box">
+                        <div class="overflow-auto" style="height: calc(30vh );" id="towerInfo"></div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <h2 class="text-center">Send Text Message</h2>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6 ">
+                            <textarea id="phoneNumbers" class="form-control " placeholder="Enter phone numbers separated by commas"></textarea>
+                            <br>
+                            <button class="btn form-control btn-warning " onclick="addUsersToTowers()">Add Users to Towers</button>
+                            <!-- Input for message -->
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <textarea
+                                type="text"
+                                id="message"
+                                class="form-control"
+                                placeholder="Enter your message"
+                            ></textarea>
+                            <br>
+                            <button class="btn form-control btn-primary" onclick="sendMessage()">Send Message</button>
+                        </div>
+                    </div>
+                    <!-- <button class="btn form-control btn-primary" class="btn btn-primary" onclick="sendMessage()">Send Message</button> -->
+                </div>
+                <div class="col-12 col-md-3">
+                    <h2>Sent Messages</h2>
+                    <div class="overflow-auto" style="height: calc(25vh );">
+                        <ul id="sentMessages"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap JS and dependencies -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Turf.js for spatial operations -->
+        <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+        <!-- Custom Scripts -->
+        <script src="{% static 'JS/script.js' %}"></script>
+        <script src="{% static 'JS/draw_shapes.js' %}"></script>
+    </body>
+</html>
