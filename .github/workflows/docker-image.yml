@@ -62,9 +62,10 @@ jobs:
             echo "Waiting for Django app to start..."
             sleep 10
           done
-
+          
           docker ps -a
           docker logs django
+
 
       # Step 8: Run Django migrations inside the container
       - name: Run Django migrations inside Docker
