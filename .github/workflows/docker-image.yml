@@ -25,9 +25,9 @@ jobs:
         with:
           python-version: '3.12'
 
-      # Step 3: Install Python dependencies (only needed for pre-build checks)
-      - name: Install dependencies
-        run: pip install -r TowerMap/requirements.txt
+      # # Step 3: Install Python dependencies (only needed for pre-build checks)
+      # - name: Install dependencies
+      #   run: pip install -r TowerMap/requirements.txt
 
       # Step 4: Create Firebase credentials file
       - name: Create Firebase credentials file
@@ -53,7 +53,7 @@ jobs:
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
             django:version_1
           
-          # Wait for the container to be ready (check with a health check or retry)
+          # Wait for the container to be ready
           for i in {1..10}; do
             if docker exec django curl -s http://localhost:8000; then
               echo "Django app is up and running"
@@ -62,9 +62,11 @@ jobs:
             echo "Waiting for Django app to start..."
             sleep 10
           done
-          
+
           docker ps -a
           docker logs django
+        shell: bash
+
 
 
       # Step 8: Run Django migrations inside the container
