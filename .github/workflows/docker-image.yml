@@ -24,36 +24,38 @@ jobs:
         with:
           python-version: '3.12'
       
-      # Step 3: Setting up Docker using compose file
+      # Step 3: 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      # Step 4: 
       - name: Set up Docker
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
           docker --version
           docker-compose --version  
-
+      
+      # Step 5: 
+      - name: Build Docker image # Step 3
+        run: |
+            docker build -t django_app:version_1 .
+      
+      # Step 6: 
       - name: Build and Start Containers
-        run: docker-compose up -d --build
+        run: |
+          docker run -d -p 8000:8000 --name django_app django_app:version_1
+          sleep 5  # Wait for the app to start
 
-      # Step 4: Create Firebase credentials file
+      # Step 7: 
       - name: Create Firebase credentials file
         run: |
           mkdir -p Firebase
           echo "${{ secrets.FIREBASE_CREDENTIALS_JSON }}" > Firebase/pathto_json.json
 
-      - name: Wait for PostgreSQL
-        run: |
-          for i in {1..10}; do
-            if docker exec django_app pg_isready -h db -U postgres; then
-              echo "PostgreSQL is ready!"
-              break
-            fi
-            echo "Waiting for PostgreSQL..."
-            sleep 5
-          done
-
-      # - name: Run Django Migrations
-      #   run: docker exec django_app python manage.py migrate
+        # Step 8: 
+      - name: Run Django Migrations
+        run: docker exec django_app python manage.py migrate
 
       # Step 9: Test the Django application
       - name: Test Django application
@@ -63,4 +65,5 @@ jobs:
       # Step 10: Stop and remove Docker container
       - name: Stop and remove Docker container
         run: |
-          docker-compose down
+          docker stop django_app || true
+          docker rm django_app || true
