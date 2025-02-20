@@ -11,5 +11,7 @@ urlpatterns = [
     path('get-towers/', views.get_towers, name='get_towers'),
     path('send-message/', views.send_message, name='send_message'),
     path('geojson-map/', views.geojson_map, name='geojson_map'),
+    path("firebase-config/", views.firebase_config, name="firebase_config"),
+
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

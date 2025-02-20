@@ -193,8 +193,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch('/static/JSON/Nepal_.geojson').then(res => res.json()),
         fetch('/static/JSON/provinces.geojson').then(res => res.json()),
         fetch('/static/JSON/districts.geojson').then(res => res.json()),
-        fetch('/static/JSON/municipalities.geojson').then(res => res.json()),
-        fetch('/static/JSON/wards.geojson').then(res => res.json()),
+        // fetch('/static/JSON/municipalities.geojson').then(res => res.json()),
+        // fetch('/static/JSON/wards.geojson').then(res => res.json()),
 
     ]).then(([nepalData, provincesData, districtsData, municipalitiesData, wardsData]) => {
         allDistricts = districtsData;

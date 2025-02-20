@@ -13,7 +13,7 @@ import firebaseConfig from './firebase_config.js';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);  // Initialize database
+const db = getDatabase(app);
 
 // Make sendMessage available globally
 window.sendMessage = async function () {

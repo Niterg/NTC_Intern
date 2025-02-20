@@ -23,33 +23,23 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.12'
+      
+      # Step 3: Setting up Docker using compose file
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+          docker --version
+          docker-compose --version  
 
-      # # Step 3: Install Python dependencies (only needed for pre-build checks)
-      # - name: Install dependencies
-      #   run: pip install -r TowerMap/requirements.txt
+      - name: Build and Start Containers
+        run: docker-compose up -d --build --tag django_app
 
       # Step 4: Create Firebase credentials file
       - name: Create Firebase credentials file
         run: |
           mkdir -p Firebase
           echo "${{ secrets.FIREBASE_CREDENTIALS_JSON }}" > Firebase/pathto_json.json
-
-      # Step 5: Set up Docker Buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      # Step 6: Build the Docker image
-      - name: Build Docker image
-        run: docker build -t django:version_1 .
-
-      # Step 7: Run Docker container
-      - name: Run Docker container
-        run: |
-          docker run -d -p 8000:8000 --name django django:version_1
-          docker ps -a
-          docker logs django
-          pwd
-        shell: bash
 
       - name: Wait for PostgreSQL
         run: |
@@ -62,9 +52,8 @@ jobs:
             sleep 5
           done
 
-      # Step 8: Run Django migrations inside the container
-      - name: Run Django migrations inside Docker
-        run: docker exec django python manage.py migrate
+      - name: Run Django Migrations
+        run: docker exec django_app python manage.py migrate
 
       # Step 9: Test the Django application
       - name: Test Django application
@@ -74,5 +63,4 @@ jobs:
       # Step 10: Stop and remove Docker container
       - name: Stop and remove Docker container
         run: |
-          docker stop django || true
-          docker rm django || true
+          docker-compose down
