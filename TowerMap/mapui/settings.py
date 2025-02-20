@@ -102,12 +102,12 @@ DATABASES = {
 }
 
 # We use this for docker
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default="postgres://postgres:admin@db:5432/mapdata",
-#         conn_max_age=600
-#     )
-# }
+DATABASES = {
+    'default': dj_database_url.config(
+        default="postgres://postgres:admin@db:5432/mapdata",
+        conn_max_age=600
+    )
+}
 
 
 # Password validation
