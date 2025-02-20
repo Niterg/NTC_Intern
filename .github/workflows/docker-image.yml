@@ -52,7 +52,17 @@ jobs:
             -e FIREBASE_DATABASE_URL=${{ secrets.FIREBASE_DATABASE_URL }} \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
             django:version_1
-          sleep 30  # Wait for the app to start
+          
+          # Wait for the container to be ready (check with a health check or retry)
+          for i in {1..10}; do
+            if docker exec django curl -s http://localhost:8000; then
+              echo "Django app is up and running"
+              break
+            fi
+            echo "Waiting for Django app to start..."
+            sleep 10
+          done
+
           docker ps -a
           docker logs django
 
