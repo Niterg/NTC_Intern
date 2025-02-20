@@ -52,8 +52,8 @@ jobs:
             sleep 5
           done
 
-      - name: Run Django Migrations
-        run: docker exec django_app python manage.py migrate
+      # - name: Run Django Migrations
+      #   run: docker exec django_app python manage.py migrate
 
       # Step 9: Test the Django application
       - name: Test Django application
