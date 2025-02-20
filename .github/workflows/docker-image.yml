@@ -49,11 +49,12 @@ jobs:
           docker run -d -p 8000:8000 --name django django:version_1
           docker ps -a
           docker logs django
+          pwd
         shell: bash
 
       # Step 8: Run Django migrations inside the container
       - name: Run Django migrations inside Docker
-        run: docker exec django python TowerMap/manage.py migrate
+        run: docker exec django python manage.py migrate
 
       # Step 9: Test the Django application
       - name: Test Django application
