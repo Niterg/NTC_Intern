@@ -13,6 +13,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ubuntu:latest
+      options: --memory=4g --memory-swap=4g
 
     steps:
       # Step 1: Checkout the code
@@ -52,6 +55,17 @@ jobs:
           pwd
         shell: bash
 
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..10}; do
+            if docker exec django pg_isready -h db -U postgres; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL..."
+            sleep 5
+          done
+          
       # Step 8: Run Django migrations inside the container
       - name: Run Django migrations inside Docker
         run: docker exec django python manage.py migrate
