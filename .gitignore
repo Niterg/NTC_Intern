@@ -20,8 +20,8 @@ database.md
 *.ai
 
 # Docker
-Dockerfile
-docker-compose.yaml
+# Dockerfile
+# docker-compose.yaml
 
 # Virtual environment
 venv/
