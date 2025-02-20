@@ -46,28 +46,10 @@ jobs:
       # Step 7: Run Docker container
       - name: Run Docker container
         run: |
-          docker run -d -p 8000:8000 \
-            --name django \
-            -e FIREBASE_CREDENTIALS_PATH=${{ secrets.FIREBASE_CREDENTIALS_PATH }} \
-            -e FIREBASE_DATABASE_URL=${{ secrets.FIREBASE_DATABASE_URL }} \
-            -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
-            django:version_1
-          
-          # Wait for the container to be ready
-          for i in {1..10}; do
-            if docker exec django curl -s http://localhost:8000; then
-              echo "Django app is up and running"
-              break
-            fi
-            echo "Waiting for Django app to start..."
-            sleep 10
-          done
-
+          docker run -d -p 8000:8000 --name django django:version_1
           docker ps -a
           docker logs django
         shell: bash
-
-
 
       # Step 8: Run Django migrations inside the container
       - name: Run Django migrations inside Docker
