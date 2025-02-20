@@ -14,22 +14,25 @@ import os
 from pathlib import Path
 import firebase_admin
 from firebase_admin import credentials
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+FIREBASE_CREDENTIALS_PATH = config('FIREBASE_CREDENTIALS_PATH')
+FIREBASE_DATABASE_URL = config('FIREBASE_DATABASE_URL')
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Firebase API
-cred = credentials.Certificate(os.path.join(BASE_DIR, "Firebase",
-                               "sample-firebase-ai-app-1ad8b-firebase-adminsdk-fbsvc-090770782f.json"))
+cred = credentials.Certificate(os.path.join(
+    BASE_DIR, FIREBASE_CREDENTIALS_PATH))
 firebase_admin.initialize_app(
-    cred, {'databaseURL': 'database url here'})
+    cred, {'databaseURL': FIREBASE_DATABASE_URL})
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-__c6o+-w0w3=s!^tgzmn9t$(%ddheu@q66v+^px!u1sy4dm7it'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

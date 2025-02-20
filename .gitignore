@@ -13,7 +13,7 @@ waterways.geojson
 
 # Firebase JS
 firebase_config.js
-firebase_message.js
+# firebase_message.js
 database.md
 
 # Adobe Illustrator files 
@@ -27,6 +27,7 @@ docker-compose.yaml
 venv/
 .venv/
 env/
+.env
 
 # Python compiled files
 __pycache__/

@@ -1,0 +1,69 @@
+name: Docker Django CI
+
+on:
+  push:
+    branches:
+      - master
+      - firebase
+  pull_request:
+    branches:
+      - master
+      - firebase
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Change this to your self-hosted runner if needed
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      # Step 3: Install Python dependencies
+      - name: Install dependencies
+        run: pip install -r TowerMap/requirements.txt
+
+       # Step 4: Create Firebase credentials file
+      - name: Create Firebase credentials file
+        run: |
+         mkdir -p Firebase
+         echo "${{ secrets.FIREBASE_CREDENTIALS_JSON }}" > Firebase/pathto_json.json
+
+      # Step 5: Run Django migrations
+      - name: Run Django migrations
+        env:
+          FIREBASE_CREDENTIALS_PATH: ${{ secrets.FIREBASE_CREDENTIALS_PATH }}
+          FIREBASE_DATABASE_URL: ${{ secrets.FIREBASE_DATABASE_URL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        run: python TowerMap/manage.py migrate
+
+      # Step 6: Set up Docker Buildx (optional but recommended for caching)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Step 7: Build the Docker image
+      - name: Build Docker image
+        run: docker build -t django:version_1 .
+
+      # Step 8: Run the Docker container
+      - name: Run Docker container
+        run: |
+          docker run -d -p 8000:8000 --name django django:version_1
+          sleep 10  # Wait for the app to start
+
+      # Step 9: Test the Django application
+      - name: Test Django application
+        run: |
+          curl -f http://localhost:8000 || exit 1  # Check if the app is running
+
+      # Step 10: Stop and remove the Docker container
+      - name: Stop and remove Docker container
+        run: |
+          docker stop django || true
+          docker rm django || true
