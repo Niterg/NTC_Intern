@@ -50,12 +50,16 @@ jobs:
       # Step 7: 
       - name: Create Firebase credentials file
         run: |
+          docker ps
           mkdir -p Firebase
-          echo "${{ secrets.FIREBASE_CREDENTIALS_JSON }}" > Firebase/pathto_json.json
+          echo Firebase/"${{ secrets.FIREBASE_CREDENTIALS_JSON }}".json
+
 
         # Step 8: 
       - name: Run Django Migrations
-        run: docker exec django_app python manage.py migrate
+        run: |
+          docker ps -aq
+          docker exec django_app python manage.py migrate
 
       # Step 9: Test the Django application
       - name: Test Django application
