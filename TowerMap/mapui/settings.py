@@ -9,30 +9,32 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-import dj_database_url
 import os
 from pathlib import Path
-import firebase_admin
-from firebase_admin import credentials
-from decouple import config
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-FIREBASE_CREDENTIALS_PATH = config('FIREBASE_CREDENTIALS_PATH')
-FIREBASE_DATABASE_URL = config('FIREBASE_DATABASE_URL')
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Firebase API
-cred = credentials.Certificate(os.path.join(
-    BASE_DIR, FIREBASE_CREDENTIALS_PATH))
-firebase_admin.initialize_app(
-    cred, {'databaseURL': FIREBASE_DATABASE_URL})
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# FIREBASE_CREDENTIALS_PATH = config('FIREBASE_CREDENTIALS_PATH')
+# FIREBASE_DATABASE_URL = config('FIREBASE_DATABASE_URL')
+
+
+# FIREBASE_CONFIG_PATH = os.path.join(BASE_DIR, 'map_app', 'firebase_config.py')
+
+# # Firebase API
+# cred = credentials.Certificate(os.path.join(
+#     BASE_DIR, FIREBASE_CREDENTIALS_PATH))
+# firebase_admin.initialize_app(
+#     cred, {'databaseURL': FIREBASE_DATABASE_URL})
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+# SECRET_KEY = config('SECRET_KEY')
+
+SECRET_KEY = "django-insecure-__c6o+-w0w3=s!^tgzmn9t$(%ddheu@q66v+^px!u1sy4dm7it"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,6 +77,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                # Must write this to pass auth to another app
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
@@ -93,11 +96,12 @@ WSGI_APPLICATION = 'mapui.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mapdata',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',  # Or the database server's address
-        'PORT': '5432',  # Default PostgreSQL port
+        'NAME': os.getenv('DB_NAME', 'mapdata'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'admin'),
+        # Defaults to localhost if not set
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 

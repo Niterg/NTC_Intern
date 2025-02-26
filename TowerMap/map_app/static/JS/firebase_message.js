@@ -147,3 +147,19 @@ onValue(ref(db, 'messages/'), (snapshot) => {
         sentMessagesDiv.appendChild(li);
     });
 });
+
+// function fetchMessages() {
+//     fetch('/view-message/')  // Assumes view_messages returns HTML
+//         .then(response => response.text())
+//         .then(html => {
+//             const parser = new DOMParser();
+//             const doc = parser.parseFromString(html, 'text/html');
+//             const content = doc.querySelector('.row');
+//             document.getElementById('messages-container').innerHTML = content ? content.outerHTML : '';
+//         })
+//         .catch(error => console.error('Error:', error));
+// }
+
+// // Fetch every 5 seconds
+// setInterval(fetchMessages, 5000);
+// fetchMessages();

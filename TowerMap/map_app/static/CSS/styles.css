@@ -69,3 +69,32 @@ h3, h1, h2 {
         transform: rotate(360deg);
     }
 }
+
+#tower_box {
+    padding: 10px;
+}
+
+
+/* Scrollable Tower List */
+#towerInfo {
+    max-height: 25vh;
+    /* Limit height */
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    /* Create multiple columns */
+    column-gap: 100px;
+    /* Horizontal spacing */
+    row-gap: 5px;
+    /* Vertical spacing */
+    padding: 10px;
+}
+
+/* Tower Item Layout */
+.tower-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    /* Prevent text from wrapping */
+}

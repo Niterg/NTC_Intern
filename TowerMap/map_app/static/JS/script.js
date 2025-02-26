@@ -1,74 +1,11 @@
-function applyDynamicFonts(element) {
-    // Get the raw text content without existing HTML formatting
-    let text = element.innerText;
 
-    // Define regex for Devanagari and Latin characters
-    let devanagariRegex = /[\u0900-\u097F]+/g;
-    let latinRegex = /[a-zA-Z0-9]+/g;
-
-    // Create HTML with correctly applied fonts
-    let formattedText = text
-        .split(/(\s+)/) // Split by whitespace while preserving it
-        .map(word => {
-            if (devanagariRegex.test(word)) {
-                return `<span style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: larger;">${word}</span>`;
-            } else if (latinRegex.test(word)) {
-                return `<span style="font-family: 'Poppins', sans-serif;">${word}</span>`;
-            }
-            return word; // Keep other characters (like punctuation) as-is
-        })
-        .join('');
-
-    // Prevent infinite nesting by setting innerHTML only if it has changed
-    if (element.innerHTML !== formattedText) {
-        element.innerHTML = formattedText;
-        placeCaretAtEnd(element);
-    }
-}
-
-function placeCaretAtEnd(el) {
-    el.focus();
-    let range = document.createRange();
-    let sel = window.getSelection();
-    range.selectNodeContents(el);
-    range.collapse(false);
-    sel.removeAllRanges();
-    sel.addRange(range);
-}
-
-// Add event listeners for both fields
-document.getElementById("message").addEventListener("input", function () {
-    applyDynamicFonts(this);
-});
-
-document.getElementById("phoneNumbers").addEventListener("input", function () {
-    applyDynamicFonts(this);
-});
 document.addEventListener("DOMContentLoaded", function () {
     window.map = L.map('map').setView([28.3949, 84.1240], 7);
     consttiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '© OpenStreetMap'
     }).addTo(map);
-    function updateFontStyle(textarea) {
-        let text = textarea.value;
-        let devanagariRegex = /[\u0900-\u097F]/; // Unicode range for Devanagari script
 
-        if (devanagariRegex.test(text)) {
-            textarea.style.fontFamily = "'Tiro Devanagari Sanskrit', serif";
-        } else {
-            textarea.style.fontFamily = "'Poppins', sans-serif";
-        }
-    }
-
-    // Attach event listener to both textareas
-    document.getElementById("phoneNumbers").addEventListener("input", function () {
-        updateFontStyle(this);
-    });
-
-    document.getElementById("message").addEventListener("input", function () {
-        updateFontStyle(this);
-    });
 
     let nepalLayer;
     let provinceLayer;
@@ -92,8 +29,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // loadTowers();
 
     // Keeps track of the towers shown on the map
-    async function displayTowers(filteredTowers = null, updateMap = true) {
+    async function displayTowers(filteredTowers = [], updateMap = null) {
         const towerInfo = document.getElementById('towerInfo');
+        const towerHeader = document.getElementById('towerHeader');
+        const selectAllBtn = document.getElementById('selectAllBtn');
+        const deselectAllBtn = document.getElementById('deselectAllBtn');
 
         // Fetch all towers if not already loaded
         if (allTowers.length === 0) {
@@ -102,44 +42,78 @@ document.addEventListener("DOMContentLoaded", function () {
             allTowers = data.towers;
         }
 
-        const towersToShow = filteredTowers ?? selectedGeojsonTowers; // Show towers from the selected GeoJSON
+        const towersToShow = filteredTowers ?? selectedGeojsonTowers;
 
-        towerInfo.innerHTML = `<h3>Registered Towers (${towersToShow.length}):</h3><br>`;
+        // Update tower count in the header
+        towerHeader.innerText = `Registered Towers (${towersToShow.length})`;
 
+        // Hide buttons if no towers
         if (towersToShow.length === 0) {
             towerInfo.style.display = "none";
+            selectAllBtn.style.display = "none";
+            deselectAllBtn.style.display = "none";
+            return;
         } else {
-            towerInfo.style.display = "block";
+            towerInfo.style.display = "grid";
+            selectAllBtn.style.display = "inline-block";
+            deselectAllBtn.style.display = "inline-block";
         }
 
-        // Display towers in the info panel
-        towersToShow.forEach(tower => {
+        // Clear previous content
+        towerInfo.innerHTML = "";
 
+        // Apply grid layout for horizontal arrangement
+        towerInfo.style.display = "grid";
+        towerInfo.style.gridTemplateColumns = "repeat(auto-fill, minmax(150px, 1fr))";
+        towerInfo.style.columnGap = "250px"; // Horizontal gap between items
+        towerInfo.style.rowGap = "10px"; // Vertical gap
+        towerInfo.style.padding = "10px";
+
+        // Add towers to the scrollable section
+        towersToShow.forEach(tower => {
+            const container = document.createElement('div');
+            container.className = "tower-item";
+
+            // Bootstrap Switch (Toggle)
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.role = 'switch';
             checkbox.value = tower.id;
             checkbox.id = `tower-${tower.id}`;
-            checkbox.className = `mx-2 form-check-input form-switch`;
-            checkbox.checked = true;  // Default checked
+            checkbox.className = `form-check-input form-switch`;
+            checkbox.checked = true; // Default checked
 
             const label = document.createElement('label');
             label.htmlFor = `tower-${tower.id}`;
             label.innerText = ` ${tower.name}`;
-            // If longitude and lattitude is needed
-            // label.innerText = ` ${tower.name} [Lat: ${tower.latitude}, Lng: ${tower.longitude}]`;
 
+            container.appendChild(checkbox);
+            container.appendChild(label);
 
-            towerInfo.appendChild(checkbox);
-            towerInfo.appendChild(label);
-            towerInfo.appendChild(document.createElement('br'));
+            towerInfo.appendChild(container);
         });
-
         // Update Map Only If Needed
         if (updateMap) {
             updateMapTowers(towersToShow);
         }
+        // Select All Button
+        selectAllBtn.onclick = () => {
+            document.querySelectorAll("#towerInfo input[type='checkbox']").forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        };
+
+        // Deselect All Button
+        deselectAllBtn.onclick = () => {
+            document.querySelectorAll("#towerInfo input[type='checkbox']").forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        };
+
+
     }
+
+
 
     function updateMapTowers(towers) {
         if (towerLayer) {
@@ -169,9 +143,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function filterTowers(selectedFeature) {
+
         if (!selectedFeature) {
             // If no area is selected, clear the towers
             selectedGeojsonTowers = [];
+            if (towerLayer) {
+                map.removeLayer(towerLayer);
+                towerLayer = null; // Ensure it is reset
+            }
             displayTowers([], true);  // Clear map and towerInfo
             return;
         }
@@ -193,8 +172,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch('/static/JSON/Nepal_.geojson').then(res => res.json()),
         fetch('/static/JSON/provinces.geojson').then(res => res.json()),
         fetch('/static/JSON/districts.geojson').then(res => res.json()),
-        // fetch('/static/JSON/municipalities.geojson').then(res => res.json()),
-        // fetch('/static/JSON/wards.geojson').then(res => res.json()),
+        fetch('/static/JSON/municipalities.geojson').then(res => res.json()),
+        fetch('/static/JSON/wards.geojson').then(res => res.json()),
 
     ]).then(([nepalData, provincesData, districtsData, municipalitiesData, wardsData]) => {
         allDistricts = districtsData;
@@ -261,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const selectedProvince = provincesData.features.find(f => f.properties['name'] === selectedName);
                 provinceLayer = L.geoJSON(selectedProvince, {
                     style: feature => ({
-                        color: '#2F4858', weight: 2, fillOpacity: 0.1
+                        color: '#47682C', weight: 2, fillOpacity: 0.1
                     }),
                     onEachFeature: (feature, layer) => {
                         if (feature.properties) {
@@ -278,7 +257,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }).addTo(map);
                 map.fitBounds(provinceLayer.getBounds());
                 updateDistrictDropdown(selectedProvince);
-                selectedGeojsonTowers = [];
                 filterTowers(selectedProvince);
                 districtDropdown.disabled = false;
             } else {
@@ -352,7 +330,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }).addTo(map);
                     map.fitBounds(districtLayer.getBounds());
                     updateMunicipalityDropdown(selectedDistrict);
-                    selectedGeojsonTowers = [];
                     filterTowers(selectedDistrict);
                     municipalityDropdown.disabled = false;
                 }
@@ -417,8 +394,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     }).addTo(map);
                     map.fitBounds(municipalityLayer.getBounds());
                     updateWardDropdown(selectedMunicipality);
-                    selectedGeojsonTowers = [];
                     filterTowers(selectedMunicipality);
+                    if (selectedGeojsonTowers.length === 0 && towerLayer) {
+                        map.removeLayer(towerLayer);
+                        towerLayer = null;
+                    }
                     wardDropdown.disabled = false;
                 }
             });
@@ -460,7 +440,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     );
                     wardLayer = L.geoJSON(selectedWard, {
                         style: feature => ({
-                            color: '#47682C', weight: 2, fillOpacity: 0.1
+                            color: '#2F4858', weight: 2, fillOpacity: 0.1
                         }),
                         onEachFeature: (feature, layer) => {
                             if (feature.properties) {
@@ -474,8 +454,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     }).addTo(map);
                     map.fitBounds(wardLayer.getBounds());
-                    selectedGeojsonTowers = [];
                     filterTowers(selectedWard);
+                    if (selectedGeojsonTowers.length === 0 && towerLayer) {
+                        map.removeLayer(towerLayer);
+                        towerLayer = null;
+                    }
                 }
             });
         }

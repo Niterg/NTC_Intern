@@ -1,15 +1,28 @@
+from .firebase_views import get_message_groups  # Adjust import if in views.py
 from django.http import JsonResponse
 import json
 import os
 from django.conf import settings
 from django.shortcuts import render
 from .models import Tower, UserCell
-from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from firebase_admin import db
-# Create your views here.
+from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url='authentication:login_view')
+def show_towers(request):
+    message_groups = get_message_groups()
+    return render(request, 'map_app/show_towers.html', {'message_groups': message_groups})
+
+
+@login_required(login_url='authentication:login_view')
+def view_messages(request):
+    message_groups = get_message_groups()
+    return render(request, 'map_app/view_messages.html', {'message_groups': message_groups})
+
+
+@login_required(login_url='authentication:login_view')
 def geojson_map(request):
     # Correct path to the static folder where your GeoJSON files are stored
     geojson_folder = os.path.join(
@@ -30,10 +43,7 @@ def maps_search(request):
     return render(request, 'map_app/maps_search.html')
 
 
-def show_towers(request):
-    return render(request, 'map_app/show_towers.html')
-
-
+@login_required(login_url='authentication:login_view')
 def get_towers(request):
     towers = Tower.objects.all()
     tower_data = [

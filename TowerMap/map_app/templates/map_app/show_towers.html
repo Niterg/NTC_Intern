@@ -20,6 +20,8 @@
         <!-- <script type="module" src="{% static 'JS/firebase_config.js' %}"></script> -->
         <!-- Include the script with sendMessage function -->
         <script type="module" src="{% static 'JS/firebase_message.js' %}"></script>
+        <!-- JQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Custom CSS -->
         <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
     </head>
@@ -70,7 +72,7 @@ background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items
                             </select>
                         </div>
                         <div class="text-decoration-none">
-                            <a href="/logout">Logout</a>
+                            <a href="/authentication/logout">Logout</a>
                         </div>
                     </div>
                 </div>
@@ -79,48 +81,87 @@ background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items
                     <div id="map" class="rounded-3" style="height: calc(60vh );"></div>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col-12 col-md-3">
-                    <div class=" rounded" id="tower_box">
-                        <div class="overflow-auto" style="height: calc(30vh );" id="towerInfo"></div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <h2 class="text-center">Send Text Message</h2>
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6 ">
-                            <textarea id="phoneNumbers" class="form-control " placeholder="Enter phone numbers separated by commas"></textarea>
-                            <br>
-                            <button class="btn form-control btn-warning " onclick="addUsersToTowers()">Add Users to Towers</button>
-                            <!-- Input for message -->
-                        </div>
-                        <div class="col-12 col-md-6 mb-3">
-                            <textarea
-                                type="text"
-                                id="message"
-                                class="form-control"
-                                placeholder="Enter your message"
-                            ></textarea>
-                            <br>
-                            <button class="btn form-control btn-primary" onclick="sendMessage()">Send Message</button>
-                        </div>
-                    </div>
-                    <!-- <button class="btn form-control btn-primary" class="btn btn-primary" onclick="sendMessage()">Send Message</button> -->
-                </div>
-                <div class="col-12 col-md-3">
+            <div class="mt-3">
+                <!-- <div class="col-12 col-md-3">
                     <h2>Sent Messages</h2>
                     <div class="overflow-auto" style="height: calc(25vh );">
                         <ul id="sentMessages"></ul>
                     </div>
+                </div> -->
+                <main class="row">
+                    <!-- {% if messages %}
+                        {% for message in messages %}
+                    <p class="{% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</p>
+                    {% endfor %}
+                    {% endif %} -->
+                    {% block content %}
+                        {% if request.user.is_authenticated %}
+                            {% if request.user.username == 'admin' %}
+       
+                  
+                                {% include 'map_app/towers.html' %}
+                                {% include 'map_app/send_users.html' %}
+                    <div class="row mt-3">
+                        <div class="col text-end">
+                            <button id="refresh-messages" class="btn btn-primary shadow">Refresh Messages</button>
+                        </div>
+                    </div>
+                    <div id="messages-container">
+                        {% include 'map_app/view_messages.html' %}
+                    </div>
+                    {% else %}
+                    <div class="col-12 col-sm-12 center">
+                        <div id="tower_box">
+                            <div class="row">
+                                <div class="col-lg-9 col-sm-12">
+                                    <h3 id="towerHeader" class="text-center">Registered Towers (0)</h3>
+                                </div>
+                                <!-- Select/Deselect All Buttons -->
+                                <div class="col-lg-3 col-sm-12 d-flex justify-content-center mb-2">
+                                    <button id="selectAllBtn" class="btn btn-primary btn-sm mx-1">Select All</button>
+                                    <button id="deselectAllBtn" class="btn btn-danger btn-sm mx-1">Deselect All</button>
+                                </div>
+                            </div>
+                            <!-- Scrollable List -->
+                            <div class="overflow-auto" id="towerInfo"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <p class="text-center text-muted">Only admins can view messages.</p>
+                {% endif %}
+                        {% else %}
+                <p class="text-center text-muted">Please log in to view content.</p>
+                {% endif %}
+                    {% endblock %}
+            </main>
         </div>
-        <!-- Bootstrap JS and dependencies -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Turf.js for spatial operations -->
-        <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
-        <!-- Custom Scripts -->
-        <script src="{% static 'JS/script.js' %}"></script>
-        <script src="{% static 'JS/draw_shapes.js' %}"></script>
-    </body>
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Turf.js for spatial operations -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <!-- Custom Scripts -->
+    <script src="{% static 'JS/script.js' %}"></script>
+    <script src="{% static 'JS/draw_shapes.js' %}"></script>
+    <script>
+        document.getElementById('refresh-messages').addEventListener('click', function() {
+            fetch('/map/view-messages/')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const messagesContent = doc.querySelector('.row'); // Extract the content from view_messages.html
+                    if (messagesContent) {
+                        document.getElementById('messages-container').innerHTML = messagesContent.outerHTML;
+                    } else {
+                        document.getElementById('messages-container').innerHTML = '<p class="text-center text-muted">Failed to load messages.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching messages:', error);
+                    document.getElementById('messages-container').innerHTML = '<p class="text-center text-muted">Error loading messages.</p>';
+                });
+        });
+    </script>
+</body>
 </html>
