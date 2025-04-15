@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: mapdata
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./dummy_towers.sql:/docker-entrypoint-initdb.d/dummy_towers.sql
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: django_app
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgres://postgres:admin@db:5432/mapdata"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    working_dir: /app/TowerMap
+    command: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+
+volumes:
+  postgres_data:

@@ -1,0 +1,20 @@
+# Use the official Python image
+FROM python:3.12
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy the requirements file
+COPY /TowerMap/requirements.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y postgresql-client
+# Copy the entire Django project
+COPY /TowerMap .
+
+# Expose the port Django runs on
+EXPOSE 8000
+
+# Command to run the application
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
