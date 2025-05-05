@@ -115,7 +115,7 @@ def assign_services(request, role_id):
 
 
 @login_required
-# @role_required('Super Admin')
+# @role_required('Super Administrator')
 @hierarchy_required([8, 9, 10])
 def assign_user_role(request, user_id):
     user = User.objects.get(id=user_id)
@@ -153,7 +153,7 @@ def assign_user_role(request, user_id):
 
 
 @login_required
-@role_required('Super Admin')
+@role_required('Super Administrator')
 def user_roles_view(request):
     roles = Role.objects.all().order_by('hierarchy_level')
     selected_role_id = request.GET.get(
@@ -193,7 +193,8 @@ def user_roles_view(request):
 User = get_user_model()
 
 
-@role_required('Super Admin')
+@login_required
+@role_required('Super Administrator')
 def create_user_view(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
@@ -222,7 +223,7 @@ def create_user_view(request):
 
 @login_required
 @has_role_access('rbac:activity_logs')
-# @role_required('Super Admin')
+# @role_required('Super Administrator')
 def activity_logs(request):
     tab = request.GET.get('tab', 'all')
     logs = ActivityLog.objects.all().select_related(

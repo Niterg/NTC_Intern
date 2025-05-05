@@ -104,7 +104,7 @@ DATABASES = {
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'admin'),
         # Defaults to localhost if not set
-        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'HOST': os.getenv('DB_HOST', 'db'),
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
