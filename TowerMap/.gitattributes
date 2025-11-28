@@ -1,2 +1,2 @@
 *.geojson filter=lfs diff=lfs merge=lfs -text
-
+TowerMap/map_app/static/JSON/wards.geojson filter=lfs diff=lfs merge=lfs -text
