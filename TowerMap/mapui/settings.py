@@ -11,50 +11,50 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
+from decouple import config, Csv # Import config and Csv for allowed hosts
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-# FIREBASE_CREDENTIALS_PATH = config('FIREBASE_CREDENTIALS_PATH')
-# FIREBASE_DATABASE_URL = config('FIREBASE_DATABASE_URL')
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# FIREBASE_CONFIG_PATH = os.path.join(BASE_DIR, 'map_app', 'firebase_config.py')
-
-# # Firebase API
-# cred = credentials.Certificate(os.path.join(
-#     BASE_DIR, FIREBASE_CREDENTIALS_PATH))
-# firebase_admin.initialize_app(
-#     cred, {'databaseURL': FIREBASE_DATABASE_URL})
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+# --- CORE SECURITY AND HOST SETTINGS ---
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = config('SECRET_KEY')
-
-SECRET_KEY = "django-insecure-__c6o+-w0w3=s!^tgzmn9t$(%ddheu@q66v+^px!u1sy4dm7it"
+# Fetch from environment variable (required)
+SECRET_KEY = config('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+# Fetch from environment variable, defaults to True for safety if not set
+DEBUG = config('DEBUG', default=True, cast=bool)
+
+# Fetch ALLOWED_HOSTS from env, split by comma, and include specified host
+# Use Csv to parse the comma-separated string from the .env file
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS', 
+    cast=Csv(), 
+    default=['127.0.0.1', 'localhost', 'ntc-intern.onrender.com']
+)
+# Ensure the specific host is included if not in the environment variable
+if 'ntc-intern.onrender.com' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('ntc-intern.onrender.com')
 
 
 # Application definition
-
 INSTALLED_APPS = [
-    # 'authentication',
+    # Custom apps
     'map_app',
     'rbac',
     'authentication.apps.AuthenticationConfig',
+    
+    # Django GIS
+    # 'django.contrib.gis',
+
+    # Default Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis',
     # 'django_extensions'
 ]
 
@@ -96,38 +96,17 @@ WSGI_APPLICATION = 'mapui.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# If api is not used
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'mapdata'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'admin'),
-        # Defaults to localhost if not set
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        # Use config instead of os.getenv for consistency with decouple
+        'NAME': config('DB_NAME', default='mapdata'),
+        'USER': config('DB_USER', default='postgres'),
+        'PASSWORD': config('DB_PASSWORD', default='admin'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.environ.get('DATABASE_NAME'),
-#         'USER': os.environ.get('DATABASE_USER'),
-#         'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-#         'HOST': os.environ.get('DATABASE_HOST'),
-#         'PORT': os.environ.get('DATABASE_PORT'),
-#     }
-# }
-
-
-# We use this for docker
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default="postgres://postgres:admin@db:5432/mapdata",
-#         conn_max_age=600
-#     )
-# }
 
 
 # Password validation
