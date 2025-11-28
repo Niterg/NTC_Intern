@@ -159,3 +159,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = "/login/"  # URL to redirect unauthenticated users
 LOGIN_REDIRECT_URL = "map_app:home"  # Redirect after successful login
 LOGOUT_REDIRECT_URL = "authentication:login"  # Redirect after logout
+
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Add your Render domain
+if not DEBUG:
+    ALLOWED_HOSTS.extend([
+        '.onrender.com',
+        '.ntc-intern.onrender.com'  # Replace with actual app name
+    ])
+
+# CSRF settings for your specific domain
+CSRF_TRUSTED_ORIGINS = [
+    'https://ntc-intern.onrender.com',
+    'https://*.ntc-intern.onrender.com',
+]
+
+# Add Render external hostname to CSRF trusted origins
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
