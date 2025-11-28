@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
-from decouple import config, Csv # Import config and Csv for allowed hosts
+from decouple import config, Csv  # Import config and Csv for allowed hosts
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Fetch from environment variable (required)
-SECRET_KEY = config('SECRET_KEY') 
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Fetch from environment variable, defaults to True for safety if not set
@@ -28,11 +28,13 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 # Fetch ALLOWED_HOSTS from env, split by comma, and include specified host
 # Use Csv to parse the comma-separated string from the .env file
-ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS', 
-    cast=Csv(), 
-    default=['127.0.0.1', 'localhost', 'ntc-intern.onrender.com']
+allowed_hosts_string = config(
+    'ALLOWED_HOSTS',
+    default='127.0.0.1,localhost,ntc-intern.onrender.com'
 )
+
+ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_string.split(',')]
+
 # Ensure the specific host is included if not in the environment variable
 if 'ntc-intern.onrender.com' not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append('ntc-intern.onrender.com')
@@ -44,7 +46,7 @@ INSTALLED_APPS = [
     'map_app',
     'rbac',
     'authentication.apps.AuthenticationConfig',
-    
+
     # Django GIS
     # 'django.contrib.gis',
 
