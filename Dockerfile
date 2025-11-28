@@ -19,8 +19,13 @@ COPY TowerMap/ ./TowerMap/
 # Set Firebase credentials directory (expect to mount secret later)
 RUN mkdir -p ./TowerMap/Firebase
 
+# Create entrypoint script for handling Firebase credentials
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Expose port (Django default)
 EXPOSE 8000
 
-# Run server
+# Use entrypoint to handle Firebase credentials
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["python", "TowerMap/manage.py", "runserver", "0.0.0.0:8000"]
