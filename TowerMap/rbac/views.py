@@ -153,7 +153,7 @@ def assign_user_role(request, user_id):
 
 
 @login_required
-@role_required('Super Administrator')
+@role_required('Super Admin')
 def user_roles_view(request):
     roles = Role.objects.all().order_by('hierarchy_level')
     selected_role_id = request.GET.get(
@@ -194,7 +194,7 @@ User = get_user_model()
 
 
 @login_required
-@role_required('Super Administrator')
+@role_required('Super Admin')
 def create_user_view(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)

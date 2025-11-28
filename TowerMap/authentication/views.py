@@ -47,7 +47,7 @@ def login_view(request):
                 request,
                 'LOGIN',
                 details=f"Failed login attempt for username: {username}",
-                ip_address=request.META.get('REMOTE_ADDR')
+
             )
             messages.error(request, "Invalid username or password.")
 

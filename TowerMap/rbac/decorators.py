@@ -76,7 +76,7 @@ def hierarchy_required(levels):
             except UserRole.DoesNotExist:
                 return HttpResponseForbidden("No role assigned.")
 
-            # ✅ Check if the role's level is in the allowed list
+            # Check if the role's level is in the allowed list
             if user_role.hierarchy_level in levels:
                 return view_func(request, *args, **kwargs)
 

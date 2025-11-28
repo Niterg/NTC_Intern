@@ -82,7 +82,7 @@ def get_towers(request):
 #             min_lon, min_lat, max_lon, max_lat = map(float, bbox.split(','))
 
 #             # Filter towers within bounding box
-#             towers = towers.filter(
+#             towers = towers.filter(ip_address
 #                 longitude__gte=min_lon,
 #                 longitude__lte=max_lon,
 #                 latitude__gte=min_lat,

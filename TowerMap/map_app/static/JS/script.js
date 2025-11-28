@@ -1,7 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
     window.map = L.map('map').setView([28.3949, 84.1240], 7);
-    consttiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    consttiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
         maxZoom: 18,
         attribution: '© OpenStreetMap'
     }).addTo(map);
@@ -172,8 +172,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch('https://internatntc.github.io/TowerMap/map_app/static/JSON/Nepal_.geojson').then(res => res.json()),
         fetch('https://internatntc.github.io/TowerMap/map_app/static/JSON/provinces.geojson').then(res => res.json()),
         fetch('https://internatntc.github.io/TowerMap/map_app/static/JSON/districts.geojson').then(res => res.json()),
-        // fetch('/static/JSON/municipalities.geojson').then(res => res.json()),
-        // fetch('/static/JSON/wards.geojson').then(res => res.json()),
+        fetch('/static/JSON/municipalities.geojson').then(res => res.json()),
+        fetch('/static/JSON/wards.geojson').then(res => res.json()),
 
     ]).then(([nepalData, provincesData, districtsData, municipalitiesData, wardsData]) => {
         allDistricts = districtsData;
