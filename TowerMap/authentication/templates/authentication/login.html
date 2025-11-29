@@ -1,107 +1,246 @@
-{%load static%}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login</title>
-        <!-- Bootstrap -->
+        <title>Login | NTC Intern</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Bootstrap Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="https://internatntc.github.io/TowerMap/map_app/static/CSS/styles.css">
-        <!-- Jquery  -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <!-- D3 Library -->
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
-            integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
+        <style>
+        :root {
+            /* NTC Blue / Professional Navy */
+            --brand-color: #003366; 
+            --accent-color: #0056b3;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --input-bg: #f8f9fa;
+        }
+
+        body {
+            /* Priority to Aeonik as requested, fallback to geometric sans */
+            font-family: 'Aeonik', 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            height: 100vh;
+            overflow: hidden; /* Prevent scrolling on desktop */
+            color: var(--text-main);
+            background-color: #fff;
+        }
+
+        /* LEFT SIDE: Branding Area */
+        .brand-section {
+            background-color: var(--brand-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 4rem;
+            color: white;
+        }
+
+        /* Abstract geometric pattern for the left side */
+        .brand-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0);
+            background-size: 30px 30px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* RIGHT SIDE: Form Area */
+        .login-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 10%; /* Responsive padding */
+            background-color: #fff;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Typography Override */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 500;
+            letter-spacing: -0.02em; /* Tighter tracking like Aeonik */
+        }
+
+        .login-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Form Styling - Minimalist & Square */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            border-radius: 0; /* Sharp corners */
+            padding: 1rem 1rem;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--brand-color);
+            box-shadow: none; /* No Bootstrap glow */
+            background-color: #fff;
+            outline: 2px solid rgba(0, 51, 102, 0.1);
+        }
+
+        .btn-login {
+            background-color: var(--text-main); /* Black button */
+            color: #fff;
+            border: none;
+            border-radius: 0; /* Sharp corners */
+            padding: 1rem;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-login:hover {
+            background-color: var(--brand-color);
+            color: #fff;
+        }
+
+        .forgot-link {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .forgot-link:hover {
+            color: var(--text-main);
+            border-bottom-color: var(--text-main);
+        }
+
+        /* Alert Styling */
+        .alert {
+            border-radius: 0;
+            border: none;
+            border-left: 4px solid;
+            font-size: 0.9rem;
+        }
+        .alert-error, .alert-danger { border-left-color: #dc3545; background: #fff5f5; }
+        .alert-success { border-left-color: #198754; background: #f0fdf4; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            body { overflow: auto; }
+            .brand-section { display: none; } /* Hide brand on mobile for focus */
+            .login-section { padding: 2rem; height: 100vh; }
+        }
+        </style>
     </head>
-    <body class="d-flex flex-column min-vh-100">
-        <!-- Main Content -->
-        <header>
-            <div class="app-body">
-                <div class="container d-flex justify-content-center align-items-center mt-5">
-                    <div class="col-lg-6 col-sm-12">
-                        <!-- Django Messages -->
+    <body>
+        <div class="container-fluid g-0">
+            <div class="row g-0">
+                <div class="col-md-6 brand-section">
+                    <div class="brand-pattern"></div>
+                    <div style="z-index: 1;">
+                        <span style="font-size: 2rem; font-weight: 200; letter-spacing: -0.03em;">
+                            Intern_Project
+                        </span>
+                    </div>
+                    <div style="z-index: 1;">
+                        <h1 class="display-4 fw-normal mb-3">
+                            TowerMap
+                            <br>
+                            Intelligence.
+                        </h1>
+                        <p class="opacity-75" style="max-width: 400px; font-weight: 300;">
+                            Secure access for NTC tower network visualization and infrastructure management.
+                        </p>
+                    </div>
+                    <div class="small opacity-50" style="z-index: 1;">
+                        &copy; 2025 Parag Niraula
+                    </div>
+                </div>
+                <div class="col-md-6 login-section">
+                    <div style="max-width: 420px; width: 100%; margin: 0 auto;">
                         {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="alert"
-                                aria-label="Close"
-                            ></button>
-                        </div>
-                        {% endfor %}
-                {% endif %}
-                        <div class="card">
-                            <div class="card-header">
-                                <h2>
-                                    <i class="bi bi-upc-scan mx-2"></i>
-                                    Login to NTC_Intern
-                                </h2>
+                        <div class="mb-4">
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
-                            <div class="card-body">
-                                <!-- Django Form -->
-                                <form method="post">
-                                    {% csrf_token %}
-                                    <!-- Add CSRF token for security -->
-                                    <div class="form-group">
-                                        <label for="username">
-                                            <i class="bi bi-input-cursor-text mx-2"></i>
-                                            Username
-                                        </label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="username"
-                                            name="username"
-                                            required
-                                        >
-                                    </div>
-                                    <br>
-                                    <div class="form-group">
-                                        <label for="password">
-                                            <i class="bi bi-lock mx-2"></i>
-                                            Password
-                                        </label>
-                                        <input
-                                            type="password"
-                                            class="form-control"
-                                            id="password"
-                                            name="password"
-                                            required
-                                        >
-                                    </div>
-                                    <br>
-                                    <a href="#" onclick="document.getElementById('forgot-msg').style.display='block'; return false;">
-                                        Forgot Password?
-                                    </a>
-                                    <p id="forgot-msg" style="display:none; color: red; margin-top: 10px;">
-                                        Please contact the administrator to request a password change.
-                                    </p>
-                                    <br>
-                                    <button type="submit" class="btn mt-2 btn-primary form-control">
-                                        Login
-                                        <i class="bi bi-box-arrow-in-right mx-2"></i>
-                                    </button>
-                                </form>
-                            </div>
+                            {% endfor %}
                         </div>
+                        {% endif %}
+                        <div class="login-header">
+                            <h2>Log into NTC Project</h2>
+                            <p class="text-muted">Enter your credentials to access the dashboard.</p>
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="username" class="form-label">Username / ID</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="username"
+                                    name="username"
+                                    required
+                                    autocomplete="off"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password"
+                                    name="password"
+                                    required
+                                >
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+                                <a href="#" class="forgot-link" onclick="document.getElementById('forgot-msg').style.display='block'; return false;">
+                                    Forgot password?
+                                </a>
+                            </div>
+                            <div id="forgot-msg" class="alert alert-warning" style="display:none; font-size: 0.85rem;">
+                                <i class="bi bi-shield-lock me-2"></i>
+                                Contact your system administrator to reset access.
+                            </div>
+                            <button type="submit" class="btn btn-login">
+                                Sign In
+                                <i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
-        </header>
-        <footer class="bg-dark text-white text-center py-3 mt-auto">
-            <span>© NTC_Intern 2025 | 2082</span>
-        </footer>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

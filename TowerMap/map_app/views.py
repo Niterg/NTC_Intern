@@ -33,7 +33,7 @@ def view_messages(request):
 def geojson_map(request):
     # Correct path to the static folder where your GeoJSON files are stored
     geojson_folder = os.path.join(
-        settings.BASE_DIR, 'map_app', 'static', 'json')
+        settings.BASE_DIR, 'map_app', 'static', 'JSON')
 
     # List all GeoJSON files in the folder
     geojson_files = [f for f in os.listdir(

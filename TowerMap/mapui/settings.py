@@ -30,7 +30,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 # Use Csv to parse the comma-separated string from the .env file
 allowed_hosts_string = config(
     'ALLOWED_HOSTS',
-    default='127.0.0.1,localhost,ntc-intern.onrender.com'
+    default='127.0.0.1, localhost,ntc-intern.onrender.com'
 )
 
 ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_string.split(',')]
@@ -177,6 +177,12 @@ CSRF_TRUSTED_ORIGINS = [
     'https://ntc-intern.onrender.com',
     'https://*.ntc-intern.onrender.com',
 ]
+
+# Essential for iOS/Safari ITP compatibility
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
 
 # Add Render external hostname to CSRF trusted origins
 if RENDER_EXTERNAL_HOSTNAME:

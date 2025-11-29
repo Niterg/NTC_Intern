@@ -8,14 +8,14 @@ path:focus:not(:focus-visible) {
 }
 
 body {
-    font-family: 'Poppins';
+    font-family: 'Aeonik', sans-serif;
     /* color: white; */
     /* background-color: #212529; */
 }
 
 strong {
-    font-family: 'Poppins Medium';
-    font-weight: 100;
+    font-family: 'Aeonik';
+    font-weight: 400;
 }
 
 .devanagari {
